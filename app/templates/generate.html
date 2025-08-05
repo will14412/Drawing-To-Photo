@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Generate – Draw → Photo{% endblock %}
+{% block content %}
+  <section class="flex items-center justify-center">
+    <div class="card w-full max-w-md text-center">
+      <h1 class="text-3xl font-bold mb-4">Generate a Photo</h1>
+      <form action="/generate" method="post" enctype="multipart/form-data" class="space-y-4">
+        <input type="file" name="file" accept="image/png, image/jpeg"
+               class="file:mr-4 file:rounded-md file:border-0 file:bg-indigo-600 file:text-white file:px-4 file:py-2 hover:file:bg-indigo-700">
+        <button class="btn-primary">Generate</button>
+      </form>
+    </div>
+  </section>
+{% endblock %}

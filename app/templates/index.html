@@ -1,25 +1,11 @@
 {% extends "base.html" %}
 {% block title %}Home – Draw → Photo{% endblock %}
 {% block content %}
-  {% if user %}
-    <section class="flex items-center justify-center">
-      <div class="card w-full max-w-md text-center">
-        <h1 class="text-3xl font-bold mb-4">Generate a Photo</h1>
-        <form action="/generate" method="post" enctype="multipart/form-data" class="space-y-4">
-          <input type="file" name="file" accept="image/png, image/jpeg"
-                 class="file:mr-4 file:rounded-md file:border-0 file:bg-indigo-600 file:text-white file:px-4 file:py-2
-                        hover:file:bg-indigo-700">
-          <button class="btn-primary">Generate</button>
-        </form>
-      </div>
-    </section>
-  {% else %}
-    <section class="flex items-center justify-center h-[60vh]">
-      <div class="card text-center">
-        <h1 class="text-4xl font-bold mb-4">Draw &rarr; Photo</h1>
-        <p class="mb-6">Turn your sketches into stunning photos using AI.</p>
-        <a href="/login" class="btn-primary">Get Started</a>
-      </div>
-    </section>
-  {% endif %}
+  <section class="flex items-center justify-center h-[60vh]">
+    <div class="card text-center">
+      <h1 class="text-4xl font-bold mb-4">Draw &rarr; Photo</h1>
+      <p class="mb-6">Turn your sketches into stunning photos using AI.</p>
+      <a href="/login" class="btn-primary">Get Started</a>
+    </div>
+  </section>
 {% endblock %}
