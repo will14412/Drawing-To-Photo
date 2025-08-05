@@ -1,18 +1,17 @@
 :root {
-  --primary: #1e3a8a;
-  --secondary: #3b82f6;
-  --accent: #60a5fa;
+  --primary: #ffecd2;
+  --secondary: #fcb69f;
+  --accent: #f59e0b;
 }
 
 body {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: #1f2937;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
+  background: #fff8f0;
   padding: 2rem;
   border-radius: 1rem;
   box-shadow: 0 10px 15px rgba(0,0,0,0.1);
@@ -33,7 +32,7 @@ body {
 }
 
 .link {
-  color: var(--primary);
+  color: var(--accent);
 }
 .link:hover {
   text-decoration: underline;
