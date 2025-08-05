@@ -14,7 +14,11 @@ def verify_pw(raw: str, hashed: str) -> bool: return pwd.verify(raw, hashed)
 
 def create_token(user_id: int) -> str:
     exp = dt.datetime.utcnow() + dt.timedelta(days=7)
-    return jwt.encode({"sub": user_id, "exp": exp}, SECRET, ALGO)
+    # The JWT spec expects the "sub" (subject) claim to be a string,
+    # but our user IDs are integers. python-jose enforces this and will
+    # raise a "Subject must be a string" error if we pass an int. Cast
+    # the ID to str so tokens can be decoded successfully.
+    return jwt.encode({"sub": str(user_id), "exp": exp}, SECRET, ALGO)
 
 def get_current_user(token: str | None = Cookie(default=None)):
     if not token:
