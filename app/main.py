@@ -20,7 +20,7 @@ from app.ai_client import turn_sketch_into_photo
 BASE = Path(__file__).resolve().parent
 templates = Jinja2Templates(directory=str(BASE / "templates"))
 templates.env.globals["now"] = datetime.utcnow
-app = FastAPI(title="Draw → Photo")
+app = FastAPI(title="CrayonAI")
 app.mount("/static", StaticFiles(directory=BASE / "static"), name="static")
 
 # ── DB setup (SQLite for now) ─────────────────────────────
