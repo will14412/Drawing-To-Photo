@@ -1,0 +1,102 @@
+from pathlib import Path
+from typing import Optional
+
+from fastapi import (
+    FastAPI, Request, UploadFile, Depends,
+    Response, HTTPException
+)
+from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from sqlmodel import SQLModel, Session, select, create_engine
+from datetime import datetime
+from app.models import User
+from app.auth   import (
+    get_current_user, hash_pw, verify_pw, create_token
+)
+from app.ai_client import turn_sketch_into_photo
+
+# ── FastAPI / Jinja setup ─────────────────────────────────
+BASE = Path(__file__).resolve().parent
+templates = Jinja2Templates(directory=str(BASE / "templates"))
+templates.env.globals["now"] = datetime.utcnow
+app = FastAPI(title="Draw → Photo")
+app.mount("/static", StaticFiles(directory=BASE / "static"), name="static")
+
+# ── DB setup (SQLite for now) ─────────────────────────────
+engine = create_engine("sqlite:///app.db", echo=False)
+SQLModel.metadata.create_all(engine)
+
+# ── context helper ────────────────────────────────────────
+def ctx(request: Request, **extra):
+    return {"request": request, **extra}
+
+# ── routes ────────────────────────────────────────────────
+@app.get("/", response_class=HTMLResponse)
+def home(request: Request, user: Optional[int] = Depends(get_current_user)):
+    return templates.TemplateResponse("index.html", ctx(request, user=user))
+
+# ── auth: register ────────────────────────────────────────
+@app.get("/register", response_class=HTMLResponse)
+def register_form(request: Request):
+    return templates.TemplateResponse("auth/register.html", ctx(request))
+
+@app.post("/register")
+async def register(request: Request):
+    form = await request.form()
+    email = form.get("email") or ""
+    pw    = form.get("password") or ""
+
+    with Session(engine) as db:
+        if db.exec(select(User).where(User.email == email)).first():
+            raise HTTPException(400, "Email already in use")
+        u = User(email=email, hashed_password=hash_pw(pw))
+        db.add(u); db.commit(); db.refresh(u)
+
+    token = create_token(u.id)
+    resp = Response(status_code=302, headers={"Location": "/"})
+    resp.set_cookie("token", token, httponly=True, max_age=60*60*24*7)
+    return resp
+
+# ── auth: login ───────────────────────────────────────────
+@app.get("/login", response_class=HTMLResponse)
+def login_form(request: Request):
+    return templates.TemplateResponse("auth/login.html", ctx(request))
+
+@app.post("/login")
+async def login(request: Request):
+    form  = await request.form()
+    email = form.get("email") or ""
+    pw    = form.get("password") or ""
+
+    with Session(engine) as db:
+        user = db.exec(select(User).where(User.email == email)).first()
+
+    if not user or not verify_pw(pw, user.hashed_password):
+        raise HTTPException(400, "Bad credentials")
+
+    token = create_token(user.id)
+    resp = Response(status_code=302, headers={"Location": "/"})
+    resp.set_cookie("token", token, httponly=True, max_age=60*60*24*7)
+    return resp
+
+# ── image generation ─────────────────────────────────────
+@app.post("/generate")
+async def generate(
+    file: UploadFile,
+    user: Optional[int] = Depends(get_current_user)  # change to require auth later
+):
+    if file.content_type not in ("image/png", "image/jpeg"):
+        raise HTTPException(400, "PNG/JPEG only")
+
+    photo = await turn_sketch_into_photo(await file.read())
+    return StreamingResponse(
+        iter([photo]),
+        media_type="image/png",
+        headers={"Content-Disposition": 'inline; filename="result.png"'},
+    )
+
+# ── custom 404 page ───────────────────────────────────────
+@app.exception_handler(404)
+def not_found(request: Request, exc):
+    return templates.TemplateResponse("404.html", ctx(request), status_code=404)

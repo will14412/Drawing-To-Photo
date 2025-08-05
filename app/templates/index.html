@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Home – Draw → Photo{% endblock %}
+{% block content %}
+  <section class="text-center">
+    <h1 class="text-4xl font-bold mb-6">Turn sketches into photos with AI</h1>
+
+    {% if user %}
+      <form action="/generate" method="post" enctype="multipart/form-data" class="mx-auto max-w-md space-y-4">
+        <input type="file" name="file" accept="image/png, image/jpeg"
+               class="file:mr-4 file:rounded-md file:border-0 file:bg-indigo-600 file:text-white file:px-4 file:py-2
+                      hover:file:bg-indigo-700">
+        <button class="bg-indigo-600 text-white px-5 py-2 rounded-md hover:bg-indigo-700">Generate</button>
+      </form>
+    {% else %}
+      <p class="mb-4 text-lg">Create an account to start generating.</p>
+      <a href="/register" class="bg-indigo-600 text-white px-5 py-2 rounded-md hover:bg-indigo-700">Sign up</a>
+    {% endif %}
+  </section>
+{% endblock %}

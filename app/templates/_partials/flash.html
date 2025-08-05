@@ -1,0 +1,9 @@
+{% if messages %}
+  <ul class="mb-6 space-y-2">
+    {% for m in messages %}
+      <li class="border-l-4 px-4 py-2 {% if m.category=='error' %}border-red-500 bg-red-50{% else %}border-green-500 bg-green-50{% endif %}">
+        {{ m.text }}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}

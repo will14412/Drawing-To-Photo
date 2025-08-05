@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Draw → Photo{% endblock %}</title>
+
+  <!-- Tailwind (no build step) -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+
+  <!-- If you want custom styles -->
+  <link rel="stylesheet" href="{{ url_for('static', path='css/main.css') }}">
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900 flex flex-col">
+
+  {% include "_partials/nav.html" %}
+
+  <main class="container mx-auto px-4 py-6 grow">
+    {% include "_partials/flash.html" %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="border-t py-4 text-center text-sm text-gray-500">
+    &copy; {{ now().year }} Draw → Photo
+  </footer>
+</body>
+</html>

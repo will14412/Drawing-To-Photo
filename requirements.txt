@@ -1,0 +1,9 @@
+fastapi==0.111.*
+uvicorn[standard]==0.30.*
+python-jose[cryptography]==3.3.*
+passlib[bcrypt]==1.7.*
+sqlmodel==0.0.16
+aiofiles==23.*
+python-multipart==0.0.9
+jinja2==3.*
+httpx==0.27.*

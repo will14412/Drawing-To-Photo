@@ -1,0 +1,11 @@
+{% macro input(label, name, type="text", value="", required=True) -%}
+  <label class="block">
+    <span class="text-sm font-medium">{{ label }}</span>
+    <input
+      class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200"
+      type="{{ type }}"
+      name="{{ name }}"
+      value="{{ value }}"
+      {% if required %}required{% endif %}>
+  </label>
+{%- endmacro %}
