@@ -1,0 +1,38 @@
+:root {
+  --primary: #ff6b6b;
+  --secondary: #4ecdc4;
+  --accent: #ffe66d;
+}
+
+body {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #1f2937;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+.card {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+}
+
+.btn-primary {
+  background-color: var(--accent);
+  color: #1f2937;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  transition: background-color 0.2s;
+  display: inline-block;
+}
+.btn-primary:hover {
+  background-color: #ffd43b;
+}
+
+.link {
+  color: var(--primary);
+}
+.link:hover {
+  text-decoration: underline;
+}
