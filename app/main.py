@@ -46,10 +46,22 @@ async def register(request: Request):
     form = await request.form()
     email = form.get("email") or ""
     pw    = form.get("password") or ""
+    cpw   = form.get("confirm_password") or ""
+
+    if pw != cpw:
+        return templates.TemplateResponse(
+            "auth/register.html",
+            ctx(request, messages=[{"category": "error", "text": "Passwords do not match"}]),
+            status_code=400,
+        )
 
     with Session(engine) as db:
         if db.exec(select(User).where(User.email == email)).first():
-            raise HTTPException(400, "Email already in use")
+            return templates.TemplateResponse(
+                "auth/register.html",
+                ctx(request, messages=[{"category": "error", "text": "Email already in use"}]),
+                status_code=400,
+            )
         u = User(email=email, hashed_password=hash_pw(pw))
         db.add(u); db.commit(); db.refresh(u)
 
@@ -73,7 +85,11 @@ async def login(request: Request):
         user = db.exec(select(User).where(User.email == email)).first()
 
     if not user or not verify_pw(pw, user.hashed_password):
-        raise HTTPException(400, "Bad credentials")
+        return templates.TemplateResponse(
+            "auth/login.html",
+            ctx(request, messages=[{"category": "error", "text": "Invalid email or password"}]),
+            status_code=400,
+        )
 
     token = create_token(user.id)
     resp = Response(status_code=302, headers={"Location": "/generate"})
