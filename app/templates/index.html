@@ -5,7 +5,7 @@
     <div class="card text-center">
       <h1 class="text-4xl font-bold mb-4">Draw &rarr; Photo</h1>
       <p class="mb-6">Turn your sketches into stunning photos using AI.</p>
-      <a href="/login" class="btn-primary">Get Started</a>
+      <a href="{{ '/generate' if user else '/login' }}" class="btn-primary">Get Started</a>
     </div>
   </section>
 {% endblock %}

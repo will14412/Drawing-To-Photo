@@ -1,7 +1,10 @@
 {% if messages %}
-  <div id="flash-messages" class="fixed top-4 right-4 space-y-2 z-50">
+  <div id="flash-messages" class="mx-auto mb-4 max-w-md space-y-2">
     {% for m in messages %}
-      <div class="flash-msg border-l-4 px-4 py-2 {% if m.category=='error' %}border-blue-700 bg-blue-100{% else %}border-blue-500 bg-blue-50{% endif %}">
+      <div
+        class="flash-msg px-4 py-2 text-center rounded shadow
+               {% if m.category=='error' %}bg-red-100 text-red-800{% else %}bg-green-100 text-green-800{% endif %}"
+      >
         {{ m.text }}
       </div>
     {% endfor %}
