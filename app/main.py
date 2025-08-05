@@ -5,7 +5,7 @@ from fastapi import (
     FastAPI, Request, UploadFile, Depends,
     Response, HTTPException
 )
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, StreamingResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlmodel import SQLModel, Session, select, create_engine
@@ -54,7 +54,7 @@ async def register(request: Request):
         db.add(u); db.commit(); db.refresh(u)
 
     token = create_token(u.id)
-    resp = Response(status_code=302, headers={"Location": "/"})
+    resp = Response(status_code=302, headers={"Location": "/generate"})
     resp.set_cookie("token", token, httponly=True, max_age=60*60*24*7)
     return resp
 
@@ -76,16 +76,25 @@ async def login(request: Request):
         raise HTTPException(400, "Bad credentials")
 
     token = create_token(user.id)
-    resp = Response(status_code=302, headers={"Location": "/"})
+    resp = Response(status_code=302, headers={"Location": "/generate"})
     resp.set_cookie("token", token, httponly=True, max_age=60*60*24*7)
     return resp
 
 # ── image generation ─────────────────────────────────────
+@app.get("/generate", response_class=HTMLResponse)
+def generate_form(request: Request, user: Optional[int] = Depends(get_current_user)):
+    if not user:
+        return RedirectResponse("/login")
+    return templates.TemplateResponse("generate.html", ctx(request, user=user))
+
+
 @app.post("/generate")
 async def generate(
     file: UploadFile,
-    user: Optional[int] = Depends(get_current_user)  # change to require auth later
+    user: Optional[int] = Depends(get_current_user)
 ):
+    if not user:
+        raise HTTPException(401, "Login required")
     if file.content_type not in ("image/png", "image/jpeg"):
         raise HTTPException(400, "PNG/JPEG only")
 
@@ -95,6 +104,18 @@ async def generate(
         media_type="image/png",
         headers={"Content-Disposition": 'inline; filename="result.png"'},
     )
+
+# ── gallery ───────────────────────────────────────────────
+@app.get("/gallery", response_class=HTMLResponse)
+def gallery(request: Request, user: Optional[int] = Depends(get_current_user)):
+    return templates.TemplateResponse("gallery.html", ctx(request, user=user))
+
+# ── auth: logout ──────────────────────────────────────────
+@app.post("/logout")
+def logout():
+    resp = Response(status_code=302, headers={"Location": "/"})
+    resp.delete_cookie("token")
+    return resp
 
 # ── custom 404 page ───────────────────────────────────────
 @app.exception_handler(404)
