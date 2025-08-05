@@ -5,9 +5,17 @@
 }
 
 body {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  background: linear-gradient(-45deg, var(--primary), var(--secondary), var(--accent), #a78bfa);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
   color: #1f2937;
   font-family: 'Inter', sans-serif;
+}
+
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .card {
