@@ -1,11 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Home – Draw → Photo{% endblock %}
+{% block title %}Home – CrayonAI{% endblock %}
 {% block content %}
   <section class="flex items-center justify-center h-[60vh]">
     <div class="card text-center">
-      <h1 class="text-4xl font-bold mb-4">Draw &rarr; Photo</h1>
+      <h1 class="text-4xl font-bold mb-4">CrayonAI</h1>
       <p class="mb-6">Turn your sketches into stunning photos using AI.</p>
       <a href="{{ '/generate' if user else '/login' }}" class="btn-primary">Get Started</a>
     </div>
+  </section>
+
+  <section class="relative bg-white w-screen max-w-none left-1/2 -ml-[50vw]">
+    <svg class="absolute -top-24 left-0 w-full h-24" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path fill="#ffffff" d="M0,160 Q720,0 1440,160 L1440,320 L0,320 Z"></path>
+    </svg>
+    <div class="py-16 container mx-auto px-4"></div>
   </section>
 {% endblock %}
